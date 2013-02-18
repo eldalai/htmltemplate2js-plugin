@@ -14,32 +14,31 @@ import java.util.Map;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.jfrog.maven.annomojo.annotations.MojoExecute;
-import org.jfrog.maven.annomojo.annotations.MojoGoal;
-import org.jfrog.maven.annomojo.annotations.MojoParameter;
-import org.jfrog.maven.annomojo.annotations.MojoPhase;
 
-@MojoGoal("generate-js")
-@MojoPhase("compile")
-@MojoExecute(phase="compile")
+@Mojo( name = "generate-js", defaultPhase = LifecyclePhase.PROCESS_RESOURCES )
 public class HTMLTemplateToJavascriptMojo extends AbstractMojo {
 
-	
-	@MojoParameter(alias="js-template-map-var", defaultValue = "App.templates")
+    @Parameter( defaultValue = "veamos", property = "param1", required = true )
+    private String param1;
+
+	@Parameter( alias ="js-template-map-var", defaultValue = "App.templates")
 	private String jsTemplateMapVar;
 	
-    @MojoParameter(alias="templates-folder", defaultValue = "Annotated plugin active and working")
+    @Parameter( alias = "templates-folder",  defaultValue = "Annotated plugin active and working", required= true )
     private String templatesFolder;
 
-    @MojoParameter(alias="output-file", defaultValue = "/src/main/webapp/compiledTemplates.js")
+    @Parameter( alias="output-file", defaultValue = "/src/main/webapp/compiledTemplates.js")
     private String outputFile;
     
-    @MojoParameter(expression="${project.build.directory}")
-    private String projectBuildDirectory;		
+    @Parameter( property = "outputDir", defaultValue= "${project.build.directory}")
+    private File projectBuildDirectory;		
     		
-    @MojoParameter(expression = "${basedir}", required = true, readonly = true, description = "The Maven Project")
-    private String basedir;
+    @Parameter( property = "basedir", defaultValue = "${basedir}", required = true, readonly = true)
+    private File basedir;
     
     public String getTemplatesFolder() {
         return templatesFolder;
@@ -51,6 +50,7 @@ public class HTMLTemplateToJavascriptMojo extends AbstractMojo {
 
     public void execute() throws MojoExecutionException {
     	getLog().info( "HTMLTemplateToJavascriptMojo!" );
+        getLog().info( "Param1: " + param1 );
         getLog().info( "Proccesing templatesFolder :" + getTemplatesFolder());
         getLog().info( "Output File :" + getOutputFile());
         getLog().info( "Basedir: " + basedir);
